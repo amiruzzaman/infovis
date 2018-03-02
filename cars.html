@@ -1,0 +1,69 @@
+ <!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<head>
+<title></title>
+<style>
+.axis {
+	  font: 10px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+
+</style>
+<!-- load the d3.js library --> 
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+var margin = {top: 20, right: 20, bottom: 70, left: 40},
+    width = 600 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+/*
+d3.csv("csv/cars.csv", function(data) {
+  console.log(data[0]);
+  
+});
+*/
+d3.csv("csv/cars.csv")
+.row(function(d) {
+        return {
+            carName: d.Car,
+            companyName: d.Manufacturer.toUpperCase(), // converting name to upper case 
+			milePerGalon: d.MPG.toString(),
+			displacement: d.Displacement.toString()
+        }; 
+   })
+   
+   
+  .get(function(data) {
+      //console.log(data);
+	  			
+		for(var i=0; i < data.length; i++){
+		   var div = document.createElement('div');
+
+    div.className = 'row';
+
+    div.innerHTML =
+        '<div id="'+i+'">'+data[i].carName + ", " + data[i].companyName+'</div>';
+
+    document.getElementById('content').appendChild(div);
+		}
+
+		
+});
+</script>
+</head>
+<body>
+
+<h1>My First Heading</h1>
+<p>My first paragraph.</p>
+<div id="content"></div>
+
+</body>
+</html> 
