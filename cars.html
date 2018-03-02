@@ -18,7 +18,7 @@
 
 </style>
 <!-- load the d3.js library --> 
-<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="d3/d3.js"></script>
 <script>
 var margin = {top: 20, right: 20, bottom: 70, left: 40},
     width = 600 - margin.left - margin.right,
@@ -54,7 +54,9 @@ d3.csv("csv/cars.csv")
 
     document.getElementById('content').appendChild(div);
 		}
-
+ var minMPG = d3.min(data, function(data){return parseInt(data.milePerGalon);});
+ var maxMPG = d3.max(data, function(data){return parseInt(data.milePerGalon);});
+ alert(minMPG);
 		
 });
 </script>
@@ -64,6 +66,6 @@ d3.csv("csv/cars.csv")
 <h1>My First Heading</h1>
 <p>My first paragraph.</p>
 <div id="content"></div>
-
+bar graph example https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4
 </body>
 </html> 
