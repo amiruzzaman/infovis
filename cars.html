@@ -1,116 +1,302 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<meta charset="utf-8">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style>
+            .axis {
+                font: 10px sans-serif;
+            }
+            .axis path,
+            .axis line {
+                fill: none;
+                stroke: #000;
+                shape-rendering: crispEdges;
+            }
 
-<head>
-<title></title>
-<style>
-.axis {
-	  font: 10px sans-serif;
-	}
+        </style>
+        <!--style for tab-->
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700');
+            @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
-	.axis path,
-	.axis line {
-	  fill: none;
-	  stroke: #000;
-	  shape-rendering: crispEdges;
-	}
+            *, *:before, *:after {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-</style>
-<svg width="960" height="500"></svg>
-<!-- load the d3.js library --> 
-<script src="d3/d3.js"></script>
-<script>
-var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            html, body {
+                height: 100vh;
+            }
 
-var x0 = d3.scaleBand()
-    .rangeRound([0, width])
-    .paddingInner(0.1);
+            body {
+                font: 14px/1 'Open Sans', sans-serif;
+                color: #555;
+                background: #eee;
+            }
 
-var x1 = d3.scaleBand()
-    .padding(0.05);
+            h1 {
+                padding: 50px 0;
+                font-weight: 400;
+                text-align: center;
+            }
 
-var y = d3.scaleLinear()
-    .rangeRound([height, 0]);
+            p {
+                margin: 0 0 20px;
+                line-height: 1.5;
+            }
 
-var z = d3.scaleOrdinal()
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+            main {
+                min-width: 320px;
+                max-width: 800px;
+                padding: 50px;
+                margin: 0 auto;
+                background: #fff;
+            }
 
-d3.csv("csv/cars.csv", function(d, i, columns) {
-  for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
-  return d;
-}, function(error, data) {
-  if (error) throw error;
+            section {
+                display: none;
+                padding: 20px 0 0;
+                border-top: 1px solid #ddd;
+            }
 
-  var keys = data.columns.slice(1);
+            input {
+                display: none;
+            }
 
-  x0.domain(data.map(function(d) { return d.State; }));
-  x1.domain(keys).rangeRound([0, x0.bandwidth()]);
-  y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { return d[key]; }); })]).nice();
+            label {
+                display: inline-block;
+                margin: 0 0 -1px;
+                padding: 15px 25px;
+                font-weight: 600;
+                text-align: center;
+                color: #bbb;
+                border: 1px solid transparent;
+            }
 
-  g.append("g")
-    .selectAll("g")
-    .data(data)
-    .enter().append("g")
-      .attr("transform", function(d) { return "translate(" + x0(d.State) + ",0)"; })
-    .selectAll("rect")
-    .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
-    .enter().append("rect")
-      .attr("x", function(d) { return x1(d.key); })
-      .attr("y", function(d) { return y(d.value); })
-      .attr("width", x1.bandwidth())
-      .attr("height", function(d) { return height - y(d.value); })
-      .attr("fill", function(d) { return z(d.key); });
+            label:before {
+                font-family: fontawesome;
+                font-weight: normal;
+                margin-right: 10px;
+            }
 
-  g.append("g")
-      .attr("class", "axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x0));
+            label[for*='1']:before { content: '\f1cb'; }
+            label[for*='2']:before { content: '\f17d'; }
+            label[for*='3']:before { content: '\f16b'; }
+            label[for*='4']:before { content: '\f1a9'; }
 
-  g.append("g")
-      .attr("class", "axis")
-      .call(d3.axisLeft(y).ticks(null, "s"))
-    .append("text")
-      .attr("x", 2)
-      .attr("y", y(y.ticks().pop()) + 0.5)
-      .attr("dy", "0.32em")
-      .attr("fill", "#000")
-      .attr("font-weight", "bold")
-      .attr("text-anchor", "start")
-      .text("Population");
+            label:hover {
+                color: #888;
+                cursor: pointer;
+            }
 
-  var legend = g.append("g")
-      .attr("font-family", "sans-serif")
-      .attr("font-size", 10)
-      .attr("text-anchor", "end")
-    .selectAll("g")
-    .data(keys.slice().reverse())
-    .enter().append("g")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+            input:checked + label {
+                color: #555;
+                border: 1px solid #ddd;
+                border-top: 2px solid orange;
+                border-bottom: 1px solid #fff;
+            }
 
-  legend.append("rect")
-      .attr("x", width - 19)
-      .attr("width", 19)
-      .attr("height", 19)
-      .attr("fill", z);
+            #tab1:checked ~ #content1,
+            #tab2:checked ~ #content2,
+            #tab3:checked ~ #content3,
+            #tab4:checked ~ #content4 {
+                display: block;
+            }
 
-  legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 9.5)
-      .attr("dy", "0.32em")
-      .text(function(d) { return d; });
-});
-</script>
-</head>
-<body>
+            @media screen and (max-width: 650px) {
+                label {
+                    font-size: 0;
+                }
+                label:before {
+                    margin: 0;
+                    font-size: 18px;
+                }
+            }
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
-<div id="content"></div>
-bar graph example https://bl.ocks.org/mbostock/3887051
-</body>
+            @media screen and (max-width: 400px) {
+                label {
+                    padding: 15px;
+                }
+            }
+        </style>
+
+    </head>
+    <body>
+        
+        <h1>Homework2</h1>
+
+        <main>
+
+            <input id="tab1" type="radio" name="tabs" checked>
+            <label for="tab1">Cars</label>
+
+            <input id="tab2" type="radio" name="tabs">
+            <label for="tab2">Dribbble</label>
+
+            <input id="tab3" type="radio" name="tabs">
+            <label for="tab3">Dropbox</label>
+
+            <input id="tab4" type="radio" name="tabs">
+            <label for="tab4">Drupal</label>
+
+            <section id="content1">
+                <svg width="750" height="350"></svg>
+                <p>
+                    Bacon ipsum dolor sit amet beef venison beef ribs kielbasa. Sausage pig leberkas, t-bone sirloin shoulder bresaola. Frankfurter rump porchetta ham. Pork belly prosciutto brisket meatloaf short ribs.
+                </p>
+                <p>
+                    Brisket meatball turkey short loin boudin leberkas meatloaf chuck andouille pork loin pastrami spare ribs pancetta rump. Frankfurter corned beef beef tenderloin short loin meatloaf swine ground round venison.
+                </p>
+            </section>
+
+            <section id="content2">
+                <p>
+                    Bacon ipsum dolor sit amet landjaeger sausage brisket, jerky drumstick fatback boudin ball tip turducken. Pork belly meatball t-bone bresaola tail filet mignon kevin turkey ribeye shank flank doner cow kielbasa shankle. Pig swine chicken hamburger, tenderloin turkey rump ball tip sirloin frankfurter meatloaf boudin brisket ham hock. Hamburger venison brisket tri-tip andouille pork belly ball tip short ribs biltong meatball chuck. Pork chop ribeye tail short ribs, beef hamburger meatball kielbasa rump corned beef porchetta landjaeger flank. Doner rump frankfurter meatball meatloaf, cow kevin pork pork loin venison fatback spare ribs salami beef ribs.
+                </p>
+                <p>
+                    Jerky jowl pork chop tongue, kielbasa shank venison. Capicola shank pig ribeye leberkas filet mignon brisket beef kevin tenderloin porchetta. Capicola fatback venison shank kielbasa, drumstick ribeye landjaeger beef kevin tail meatball pastrami prosciutto pancetta. Tail kevin spare ribs ground round ham ham hock brisket shoulder. Corned beef tri-tip leberkas flank sausage ham hock filet mignon beef ribs pancetta turkey.
+                </p>
+            </section>
+
+            <section id="content3">
+                <p>
+                    Bacon ipsum dolor sit amet beef venison beef ribs kielbasa. Sausage pig leberkas, t-bone sirloin shoulder bresaola. Frankfurter rump porchetta ham. Pork belly prosciutto brisket meatloaf short ribs.
+                </p>
+                <p>
+                    Brisket meatball turkey short loin boudin leberkas meatloaf chuck andouille pork loin pastrami spare ribs pancetta rump. Frankfurter corned beef beef tenderloin short loin meatloaf swine ground round venison.
+                </p>
+            </section>
+
+            <section id="content4">
+                <p>
+                    Bacon ipsum dolor sit amet landjaeger sausage brisket, jerky drumstick fatback boudin ball tip turducken. Pork belly meatball t-bone bresaola tail filet mignon kevin turkey ribeye shank flank doner cow kielbasa shankle. Pig swine chicken hamburger, tenderloin turkey rump ball tip sirloin frankfurter meatloaf boudin brisket ham hock. Hamburger venison brisket tri-tip andouille pork belly ball tip short ribs biltong meatball chuck. Pork chop ribeye tail short ribs, beef hamburger meatball kielbasa rump corned beef porchetta landjaeger flank. Doner rump frankfurter meatball meatloaf, cow kevin pork pork loin venison fatback spare ribs salami beef ribs.
+                </p>
+                <p>
+                    Jerky jowl pork chop tongue, kielbasa shank venison. Capicola shank pig ribeye leberkas filet mignon brisket beef kevin tenderloin porchetta. Capicola fatback venison shank kielbasa, drumstick ribeye landjaeger beef kevin tail meatball pastrami prosciutto pancetta. Tail kevin spare ribs ground round ham ham hock brisket shoulder. Corned beef tri-tip leberkas flank sausage ham hock filet mignon beef ribs pancetta turkey.
+                </p>
+            </section>
+
+        </main>
+        
+        
+        <!-- load the d3.js library --> 
+        <script src="d3/d3.js"></script>
+        <script>
+            var svg = d3.select("svg"),
+                    margin = {top: 20, right: 20, bottom: 30, left: 40},
+                    width = +svg.attr("width") - margin.left - margin.right,
+                    height = +svg.attr("height") - margin.top - margin.bottom,
+                    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var x0 = d3.scaleBand()
+                    .rangeRound([0, width])
+                    .paddingInner(0.1);
+
+            var x1 = d3.scaleBand()
+                    .padding(0.05);
+
+            var y = d3.scaleLinear()
+                    .rangeRound([height, 0]);
+
+            var z = d3.scaleOrdinal()
+                    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+            d3.csv("csv/cars.csv", function (d, i, columns) {
+                for (var i = 1, n = columns.length; i < n; ++i)
+                    d[columns[i]] = +d[columns[i]];
+                return d;
+            }, function (error, data) {
+                if (error)
+                    throw error;
+
+                var keys = data.columns.slice(1);
+
+                x0.domain(data.map(function (d) {
+                    return d.Cars;
+                }));
+                x1.domain(keys).rangeRound([0, x0.bandwidth()]);
+                y.domain([0, d3.max(data, function (d) {
+                        return d3.max(keys, function (key) {
+                            return d[key];
+                        });
+                    })]).nice();
+
+                g.append("g")
+                        .selectAll("g")
+                        .data(data)
+                        .enter().append("g")
+                        .attr("transform", function (d) {
+                            return "translate(" + x0(d.Car) + ",0)";
+                        })
+                        .selectAll("rect")
+                        .data(function (d) {
+                            return keys.map(function (key) {
+                                return {key: key, value: d[key]};
+                            });
+                        })
+                        .enter().append("rect")
+                        .attr("x", function (d) {
+                            return x1(d.key);
+                        })
+                        .attr("y", function (d) {
+                            return y(d.value);
+                        })
+                        .attr("width", x1.bandwidth())
+                        .attr("height", function (d) {
+                            return height - y(d.value);
+                        })
+                        .attr("fill", function (d) {
+                            return z(d.key);
+                        });
+
+                g.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(d3.axisBottom(x0));
+
+                g.append("g")
+                        .attr("class", "axis")
+                        .call(d3.axisLeft(y).ticks(null, "s"))
+                        .append("text")
+                        .attr("x", 2)
+                        .attr("y", y(y.ticks().pop()) + 0.5)
+                        .attr("dy", "0.32em")
+                        .attr("fill", "#000")
+                        .attr("font-weight", "bold")
+                        .attr("text-anchor", "start")
+                        .text("Population");
+
+                var legend = g.append("g")
+                        .attr("font-family", "sans-serif")
+                        .attr("font-size", 10)
+                        .attr("text-anchor", "end")
+                        .selectAll("g")
+                        .data(keys.slice().reverse())
+                        .enter().append("g")
+                        .attr("transform", function (d, i) {
+                            return "translate(0," + i * 20 + ")";
+                        });
+
+                legend.append("rect")
+                        .attr("x", width - 19)
+                        .attr("width", 19)
+                        .attr("height", 19)
+                        .attr("fill", z);
+
+                legend.append("text")
+                        .attr("x", width - 24)
+                        .attr("y", 9.5)
+                        .attr("dy", "0.32em")
+                        .text(function (d) {
+                            return d;
+                        });
+            });
+        </script>
+        
+        <!--        bar graph example https://bl.ocks.org/mbostock/3887051-->
+
+        
+    </body>
 </html> 
