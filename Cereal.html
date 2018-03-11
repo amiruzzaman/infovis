@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Homework2</title>
+    <link rel="stylesheet" type="text/css" href="css/amir.cereal.style.css" />
+    <script src="http://d3js.org/d3.v2.js"></script>
+    <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/amir.menu.css">
+</head>
+<body>
+    <div id="cssmenu">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Car.html">Car</a></li>
+            <li><a href="Cereal.html">Cereal</a></li>
+            <li>
+                <a href="Film.html">Film</a>
+                <!--
+                <ul>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                </ul>
+                -->
+            </li>
+            <li><a href="Funds.html">Funds</a></li>
+            <li><a href="Grocery.html">Grocery</a></li>
+        </ul>
+    </div>
+    <span><p style="width:800px; text-align:left; padding-left:200px;">This visualization showing differences among different types of cereal companies and their associated calorie values. The tree-map view visualization helps to see the comparison of each cereal brand based on calorie and associated fat values.  The bigger the box is higher the calorie and fat values are. If you click on any of these boxes then the box will show the manufacturer name and associated calorie for the brand. </p></span>
+    <p id="chart">
+    <p id="rawdata">
+        <script src="js/amir.cereal.treemap.js"></script>
+        <script>
+            function reSortRoot(root, value_key) {
+                //console.log("Calling");
+                for (var key in root) {
+                    if (key == "key") {
+                        root.name = root.key;
+                        delete root.key;
+                    }
+                    if (key == "values") {
+                        root.children = [];
+                        for (item in root.values) {
+                            root.children.push(reSortRoot(root.values[item], value_key));
+                        }
+                        delete root.values;
+                    }
+                    if (key == value_key) {
+                        root.value = parseFloat(root[value_key]);
+                        delete root[value_key];
+                    }
+                }
+                return root;
+            }
+
+            $(document).ready(function () {
+                // You can comment out the whole csv section if you just have a JSON file.
+                // loadJSONFile('data/portaldata.json');
+
+                d3.csv("csv/cereals.csv", function (csv_data) {
+
+                    // Add, remove or change the key values to change the hierarchy.
+                    var nested_data = d3.nest()
+                        .key(function (d) { return d.Cereal; })
+                        .key(function (d) { return d.Manufacturer; })
+                        .key(function (d) { return d.Cereal; })
+                        .entries(csv_data);
+
+                    // Creat the root node for the treemap
+                    var root = {};
+
+                    // Add the data to the tree
+                    root.key = "Cereal Data";
+                    root.values = nested_data;
+
+                    // Change the key names and children values from .next and add values for a chosen column to define the size of the blocks
+                    root = reSortRoot(root, "Calories");
+
+                    // DEBUG
+                    //$("#rawdata").html(JSON.stringify(root));
+
+                    loadData(root);
+
+                });
+
+
+            });
+        </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<head>
+    <title>Homework2</title>
+    <meta charset="utf-8">
+    <style>
+        /* set the CSS */
+
+        body {
+            font: 12px Arial;
+        }
+
+        path {
+            stroke: steelblue;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="css/amir.menu.css">
+</head>
+
+<body>
+    <div id="cssmenu">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Car.html">Car</a></li>
+            <li><a href="Cereal.html">Cereal</a></li>
+            <li>
+                <a href="Film.html">Film</a>
+                <!--
+                <ul>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                </ul>
+                -->
+            </li>
+            <li><a href="Funds.html">Funds</a></li>
+            <li><a href="Grocery.html">Grocery</a></li>
+        </ul>
+    </div>
+    <span><p style="width:750px; padding-left:20px;">This visualization showing differences among different films subjects. The visualization shows the comparison values in terms of average length of the film and awards. Moreover, the visualization shows differences in award winning categories, and not winner categories. The lengths of movies are ranged from 0-120 is included in y-axis and film subjects are in x-axis. Hovering over each bar chart shows associated film subject and length of the film. </p></span>
+    <svg id="chart" width="750" height="400"></svg>
+
+
+    <!-- load the d3.js library -->
+    <script src="js/d3.v3.min.js"></script>
+    <script src="js/dimple.v2.1.0.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+
+    <script>
+
+        $.ajax("csv/film.csv", {
+            mimeType: 'text/plain; charset=x-user-defined',
+            success: function (data) {
+                var csv = d3.csv.parse(data);
+                //console.table(csv);
+
+                var svg = dimple.newSvg("#chart", 600, 400);
+                var myChart = new dimple.chart(svg, csv);
+                myChart.setBounds(60, 45, 510, 315)
+                myChart.addCategoryAxis("x", ["Awards", "Subject"]);
+                myChart.addMeasureAxis("y", "Length");
+                myChart.addSeries("Subject", dimple.plot.bar);
+                myChart.addLegend(200, 10, 380, 20, "right");
+                myChart.draw();
+
+
+            }
+        });
+
+
+    </script>
+</body>
+</html>

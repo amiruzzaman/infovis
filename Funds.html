@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<head>
+    <title>Homework2</title>
+    <meta charset="utf-8">
+    <style>
+        /* set the CSS */
+
+        body {
+            font: 12px Arial;
+        }
+
+        path {
+            stroke: steelblue;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="css/amir.menu.css">
+</head>
+<body>
+    <div id="cssmenu">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Car.html">Car</a></li>
+            <li><a href="Cereal.html">Cereal</a></li>
+            <li>
+                <a href="Film.html">Film</a>
+                <!--
+                <ul>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                </ul>
+                -->
+            </li>
+            <li><a href="Funds.html">Funds</a></li>
+            <li><a href="Grocery.html">Grocery</a></li>
+        </ul>
+    </div>
+    <span><p style="width:750px; padding-left:20px;">In this case, I used visualization to show the difference in types of mutual funds. For example, international stocks, large growth, large value, small growth, small value, etc. Each rectangle represents a company type. The 5-year income information are ranged from 8.17-21.29 is included in y-axis and company types are in x-axis. Hovering over each bar rectangle shows associated company type and their associated income values. </p></span>
+
+    <svg id="chart" width="750" height="400"></svg>
+
+
+    <!-- load the d3.js library -->
+    <script src="js/d3.v3.min.js"></script>
+    <script src="js/dimple.v2.1.0.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+
+
+    <script>
+
+        $.ajax("csv/mutualfunds.csv", {
+            mimeType: 'text/plain; charset=x-user-defined',
+            success: function (data) {
+                var csv = d3.csv.parse(data);
+                //console.table(csv);
+
+                var width = 800;
+                //var svg = d3.select("#chart").append("svg");
+                //.attr("width", width);
+                var svg = dimple.newSvg("#chart", 600, 400);
+                var myChart = new dimple.chart(svg, csv);
+                //                myChart.setBounds(65, 50, 505, 310)
+                //                myChart.addPctAxis("x", "Net assets");
+                //                myChart.addPctAxis("y", "YTD", "Category");
+                //                myChart.addSeries("Category", dimple.plot.bar);
+                //                myChart.addLegend(220, 10, 380, 20, "right");
+                //                myChart.draw();
+
+                myChart.setBounds(90, 50, 480, 310)
+                myChart.addCategoryAxis("x", ["Category", "Net assets"]);
+                myChart.addCategoryAxis("y", "5YR");
+                myChart.addSeries("Category", dimple.plot.bar);
+                myChart.addLegend(240, 10, 330, 20, "right");
+                myChart.draw();
+
+            }
+        });
+
+
+    </script>
+</body>

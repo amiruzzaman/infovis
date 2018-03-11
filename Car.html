@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<head>
+    <title>Homework2</title>
+    <meta charset="utf-8">
+    <style>
+        /* set the CSS */
+
+        body {
+            font: 12px Arial;
+        }
+
+        path {
+            stroke: steelblue;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="css/amir.menu.css">
+</head>
+<body>
+
+    <div id="cssmenu">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Car.html">Car</a></li>
+            <li><a href="Cereal.html">Cereal</a></li>
+            <li>
+                <a href="Film.html">Film</a>
+                <!--
+                <ul>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                    <li><a href="#">link</a></li>
+                </ul>
+                -->
+            </li>
+            <li><a href="Funds.html">Funds</a></li>
+            <li><a href="Grocery.html">Grocery</a></li>
+        </ul>
+    </div>
+    <span><p style="width:750px; padding-left:20px;">This visualization showing differences among different car companies. The visualization shows the comparison values in average horsepower and manufacturers. The average horsepower ranged from 0-26 is included in y-axis and manufacturing companies in x-axis. Hovering over each circle shows associated manufacturing company and average horsepower</p></span>
+    <svg id="chart" width="750" height="400"></svg>
+
+
+    <!-- load the d3.js library -->
+    <script src="js/d3.v3.min.js"></script>
+    <script src="js/dimple.v2.1.0.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+
+
+    <script>
+
+        $.ajax("csv/cars2.csv", {
+            mimeType: 'text/plain; charset=x-user-defined',
+            success: function (data) {
+                var csv = d3.csv.parse(data);
+                //console.table(csv);
+
+                var width = 800;
+                //var svg = d3.select("#chart").append("svg");
+                //.attr("width", width);
+                var svg = dimple.newSvg("#chart", 600, 400);
+                var chart = new dimple.chart(svg, csv);
+                chart.setBounds(60, 30, 600, 250)
+                chart.addCategoryAxis("x", "Manufacturer");
+                var y = chart.addMeasureAxis("y", "Horsepower");
+                y.overrideMin = 0;
+                y.overrideMax = 250;
+                chart.addSeries("Manufacturer", dimple.plot.bubble);
+                chart.addLegend(40, 10, 510, 80, "right");
+                chart.draw();
+
+
+            }
+        });
+
+
+    </script>
+</body>
